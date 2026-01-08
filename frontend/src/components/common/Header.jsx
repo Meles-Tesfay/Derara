@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Moon, Sun } from "lucide-react";
-import logo from "../../assets/logo.png";
+import Logo from "./Logo";
 import Navbar from "./Navbar";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
@@ -33,19 +33,15 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled || isBlogPage
-        ? "bg-black/80 backdrop-blur-md shadow-lg py-3 border-b border-white/10"
+        ? "bg-white/95 dark:bg-black/80 backdrop-blur-md shadow-lg py-3 border-b border-gray-100 dark:border-white/10"
         : "bg-transparent py-5 border-transparent"
         }`}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
         {/* LEFT: Logo */}
-        <Link to="/" className="flex items-center group">
-          <div className="h-12 lg:h-10 flex items-center transition-transform duration-300 group-hover:scale-105">
-            <img
-              src={logo}
-              alt="Company Logo"
-              className="h-32 w-auto object-contain drop-shadow-md"
-            />
+        <Link to="/" className="flex items-center group relative z-[60]">
+          <div className="flex items-center transition-transform duration-300 group-hover:scale-105">
+            <Logo />
           </div>
         </Link>
 
@@ -78,7 +74,13 @@ const Header = () => {
           {/* Mobile Hamburger */}
           <button
             onClick={() => setMobileOpen((prev) => !prev)}
-            className="lg:hidden text-gray-900 dark:text-white/90 p-2 rounded-md transition duration-200 hover:text-gray-700 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10"
+            className={`lg:hidden relative z-[60] p-2 rounded-md transition duration-200 ${
+              mobileOpen
+                 ? "text-white hover:bg-white/10"
+                 : scrolled || isBlogPage
+                 ? "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10"
+                 : "text-white hover:bg-white/10"
+            }`}
             aria-label="Toggle mobile menu"
           >
             {mobileOpen ? <X size={28} /> : <Menu size={28} />}
