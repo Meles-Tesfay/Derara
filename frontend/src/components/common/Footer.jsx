@@ -72,23 +72,25 @@ const Footer = () => {
           <ul className="space-y-4 text-sm lg:text-base">
             <li>
               <a
-                href="tel:+251911000000"
+                href="tel:+251984008775"
                 className="text-gray-700 dark:text-gray-400 hover:text-red-500 transition-colors block"
               >
-                +251 911 00 00 00
+                +251 984 00 87 75
               </a>
             </li>
             <li>
               <a
-                href="mailto:info@derarabusiness.com"
+                href="mailto:derarabusiness53@gmail.com"
                 className="text-gray-700 dark:text-gray-400 hover:text-red-500 transition-colors block"
               >
-                info@derarabusiness.com
+                derarabusiness53@gmail.com
               </a>
             </li>
             <li>
               <span className="block mt-2 text-gray-700 dark:text-gray-400">
-                Bole Sub City, Woreda 03
+                Akaki-Kality Sub-City, Woreda 13, Tullu Dimtu
+                <br />
+                Hamer Building, 3rd Floor, Office T0011
                 <br />
                 Addis Ababa, Ethiopia
               </span>

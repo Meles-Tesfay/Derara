@@ -1,5 +1,5 @@
 import React from "react";
-import certeficate1 from "../../assets/certeficate1.png";
+import deraraCertificate from "../../assets/derara_certificate_modern.png";
 import certeficate2 from "../../assets/certeficate2.png";
 import certeficate3 from "../../assets/certeficate3.png";
 import certeficate4 from "../../assets/certeficate4.png";
@@ -52,9 +52,9 @@ const testimonials = [
 const majorCertificates = [
   {
     id: 1,
-    title: "ISO 9001:2015",
-    description: "Quality Management System Certified",
-    image: certeficate1,
+    title: "Certificate of Competence",
+    description: "Issued by Ethiopian Coffee and Tea Authority",
+    image: deraraCertificate,
   },
   {
     id: 2,

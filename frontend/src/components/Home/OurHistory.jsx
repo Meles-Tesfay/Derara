@@ -4,49 +4,28 @@ import { Calendar, Award, TrendingUp, Users, Flag } from "lucide-react";
 // Mock Data for History
 const historyData = [
   {
-    year: "2015",
-    title: "The Beginning",
+    title: "Foundation & Global Expansion",
     description:
-      "Derara was founded with a simple vision: to revolutionize the industry with innovation and passion. We started as a small team of three in a shared workspace.",
-    icon: <Flag className="w-6 h-6 text-white" />,
-    image:
-      "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=800", // Coffee beans/start
-  },
-  {
-    year: "2017",
-    title: "First Major Milestone",
-    description:
-      "We launched our flagship product, securing our first 100 enterprise clients. This pivot marked the beginning of our exponential growth.",
+      "Derara was founded with a vision to revolutionize the coffee industry, deeply rooted in Ethiopian heritage. From a shared workspace to expanding internationally with offices in Dubai and London, we bring the authentic taste of Ethiopia to the world.",
     icon: <TrendingUp className="w-6 h-6 text-white" />,
     image:
-      "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800", // Roasting/Production
+      "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800", // Traditional Coffee Pouring
   },
   {
-    year: "2019",
-    title: "Global Expansion",
-    description:
-      "Expansion into international markets. We opened offices in Dubai and London, bringing our unique solutions to a global audience.",
-    icon: <Users className="w-6 h-6 text-white" />,
-    image:
-      "https://images.unsplash.com/photo-1524522173746-f628baad3644?auto=format&fit=crop&q=80&w=800", // Global/Logistics
-  },
-  {
-    year: "2021",
     title: "Industry Recognition",
     description:
-      "Received the 'Tech Innovator of the Year' award. Our commitment to excellence was recognized on the global stage.",
+      "Received the 'Tech Innovator of the Year' award for our sustainable export practices. Our commitment to excellence in delivering premium Ethiopian coffee was recognized on the global stage.",
     icon: <Award className="w-6 h-6 text-white" />,
     image:
-      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800", // Award/Quality
+      "https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?auto=format&fit=crop&q=80&w=800", // Coffee Cherries/Farm
   },
   {
-    year: "2024",
     title: "Looking Ahead",
     description:
-      "Today, we are a team of 500+ professionals pushing the boundaries of what's possible. The future is bright, and we are just getting started.",
+      "Today, we are a team of 500+ professionals pushing the boundaries of what's possible. We continue to empower local farmers while connecting the world with the finest Ethiopian beans.",
     icon: <Calendar className="w-6 h-6 text-white" />,
     image:
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800", // Future/Meeting/Growth
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800", // Modern Office/Growth
   },
 ];
 
@@ -121,9 +100,6 @@ const OurHistory = () => {
                         />
                       </div>
 
-                      <span className="text-red-500 dark:text-red-400 font-bold text-xl mb-2 block">
-                        {item.year}
-                      </span>
                       <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                         {item.title}
                       </h3>

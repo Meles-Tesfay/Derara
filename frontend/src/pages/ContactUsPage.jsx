@@ -84,20 +84,20 @@ const ContactUsPage = () => {
               <ContactCard
                 icon={<Mail className="w-6 h-6 text-red-500" />}
                 title="Email Us"
-                content="hello@derara.com"
+                content="derarabusiness53@gmail.com"
                 subContent="Support team available 24/7"
               />
               <ContactCard
                 icon={<Phone className="w-6 h-6 text-red-500" />}
                 title="Call Us"
-                content="+1 (555) 000-0000"
+                content="+251 984 00 87 75"
                 subContent="Mon-Fri, 9am - 6pm EST"
               />
               <ContactCard
                 icon={<MapPin className="w-6 h-6 text-red-500" />}
                 title="Visit Us"
-                content="123 Innovation Dr, Tech City"
-                subContent="Office 404, Building B"
+                content="Akaki-Kality Sub-City, Woreda 13, Tullu Dimtu"
+                subContent="Hamer Building, 3rd Floor, Office T0011, Addis Ababa"
               />
             </div>
 
@@ -240,7 +240,7 @@ const ContactUsPage = () => {
         {/* Map Section */}
         <div className="mt-20 rounded-3xl overflow-hidden border border-white/10 shadow-2xl h-[400px] w-full relative animate-fade-in-up delay-500 bg-gray-900">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.545620921471!2d38.76125251403215!3d9.012588393528766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b8575017e4063%3A0x86bd4f2503282255!2sAddis%20Ababa%2C%20Ethiopia!5e0!3m2!1sen!2sus!4v1709927654321!5m2!1sen!2sus"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15764.707769854737!2d38.82261!3d8.86599!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b8575017e4063%3A0x86bd4f2503282255!2sTullu%20Dimtu%2C%20Addis%20Ababa!5e0!3m2!1sen!2set!4v1709927654321!5m2!1sen!2set"
             width="100%"
             height="100%"
             style={{ border: 0 }}

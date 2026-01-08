@@ -4,12 +4,14 @@ import { Menu, X, Moon, Sun } from "lucide-react";
 import logo from "../../assets/logo.png";
 import Navbar from "./Navbar";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { isDarkMode, toggleTheme } = useTheme();
+  const { user } = useAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -54,10 +56,10 @@ const Header = () => {
         <div className="flex items-center space-x-3 lg:space-x-4">
           {/* CTA BUTTON - Desktop */}
           <Link
-            to="/contact"
+            to={user ? (user.role === 'admin' ? '/admin-dashboard' : user.role === 'manager' ? '/manager-dashboard' : user.role === 'employee' ? '/employee-dashboard' : '/dashboard') : "/login"}
             className="hidden md:flex items-center px-5 py-2 text-sm lg:text-base font-bold uppercase tracking-wider text-white bg-red-600 dark:bg-transparent dark:text-white border-2 border-red-600 rounded-lg transition-all duration-300 shadow-[0_0_10px_rgba(220,38,38,0.3)] hover:shadow-[0_0_20px_rgba(220,38,38,0.6)] hover:bg-red-700 dark:hover:bg-red-600 hover:border-red-700 dark:hover:border-red-600 hover:-translate-y-0.5 transform"
           >
-            Get Quote
+            {user ? 'Dashboard' : 'Login / Signup'}
           </Link>
 
           {/* Dark Mode Toggle */}
