@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, User } from 'lucide-react';
@@ -49,6 +49,9 @@ const LoginPage = () => {
       setError(result.message);
     }
   };
+  useEffect (() => {
+    window.scrollTo(0, 0);
+  }, []); 
 
   return (
     <div className="min-h-screen pt-24 pb-12 px-6 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
