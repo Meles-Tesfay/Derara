@@ -73,7 +73,7 @@ const deleteUser = async (req, res) => {
         const userId = req.params.id;
 
         // Prevent self-deletion
-        if (userId === req.user.id) {
+        if (userId === req.user.clerkId || userId === req.user.id) { // Check both to be safe
             return res.status(400).json({ message: 'You cannot delete yourself' });
         }
 

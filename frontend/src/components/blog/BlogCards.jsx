@@ -1,7 +1,11 @@
 import React from "react";
 import { blogPosts } from "../../assets/assets";
 
-const BlogCards = () => {
+const BlogCards = ({ blogs }) => {
+    // If blogs is null/undefined (initial load), use static fallback (excluding top 3).
+    // If blogs is [] (fetched empty), use empty array.
+    const finalPosts = blogs || blogPosts.slice(3);
+
     const ReadMoreArrow = (
         <svg
             className="shrink-0 size-4"
@@ -31,28 +35,36 @@ const BlogCards = () => {
             </div>
 
             <div className="grid lg:grid-cols-2 lg:gap-y-16 gap-10">
-                {blogPosts.map((post) => (
+                {finalPosts.map((post) => {
+                     // Normalize
+                     const isDynamic = !!post._id; 
+                     const title = isDynamic ? post.title : (post.smallTitle || post.title);
+                     const description = isDynamic ? post.description : (post.smallDescription || post.description);
+                     const imgSrc = isDynamic ? post.image : (post.smallImgSrc || post.imgSrc);
+                     const href = isDynamic ? '#' : post.href;
+                    
+                     return (
                     <a
-                        key={post.id}
+                        key={post.id || post._id}
                         className="group block rounded-xl overflow-hidden"
-                        href={post.href}
+                        href={href}
                     >
                         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
                             <div className="shrink-0 relative rounded-xl overflow-hidden w-full sm:w-56 h-44">
                                 <img
                                     className="group-hover:scale-105 transition-transform duration-500 object-cover w-full h-full"
-                                    src={post.smallImgSrc || post.imgSrc}
-                                    alt={post.imgAlt}
+                                    src={imgSrc}
+                                    alt={title}
                                 />
                             </div>
 
                             <div className="grow">
-                                <h3 className="text-lg font-bold text-[#2D1B13] dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors">
-                                    {post.smallTitle || post.title}
+                                <h3 className="text-lg font-bold text-[#2D1B13] dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors line-clamp-2">
+                                    {title}
                                 </h3>
 
-                                <p className="mt-3 text-base text-gray-700 dark:text-gray-300 font-medium leading-relaxed border-l-2 border-black dark:border-white pl-3">
-                                    {post.smallDescription || post.description}
+                                <p className="mt-3 text-base text-gray-700 dark:text-gray-300 font-medium leading-relaxed border-l-2 border-black dark:border-white pl-3 line-clamp-3">
+                                    {description}
                                 </p>
 
                                 <p className="mt-4 inline-flex items-center gap-x-1 text-sm text-[#D62828] font-bold uppercase tracking-wider group-hover:text-black dark:group-hover:text-white transition-colors">
@@ -61,7 +73,7 @@ const BlogCards = () => {
                             </div>
                         </div>
                     </a>
-                ))}
+                )})}
             </div>
         </div>
 

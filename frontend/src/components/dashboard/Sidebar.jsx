@@ -31,6 +31,8 @@ const Sidebar = () => {
             { icon: LayoutDashboard, label: 'Admin View', path: '/admin-dashboard', roles: ['admin'] },
             { icon: ClipboardList, label: 'Task Console', path: '/manager-dashboard?tab=tasks', roles: ['manager'] },
             { icon: Coffee, label: 'UI & Content', path: '/manager-dashboard?tab=content', roles: ['manager'] },
+            { icon: Users, label: 'People', path: '/manager-dashboard?tab=users', roles: ['manager'] },
+            { icon: MessageSquare, label: 'Requests', path: '/manager-dashboard?tab=requests', roles: ['manager'] },
             { icon: LayoutDashboard, label: 'Task Center', path: '/employee-dashboard', roles: ['employee'] },
         ];
 
@@ -39,14 +41,12 @@ const Sidebar = () => {
                 { icon: Shield, label: 'All Users', path: '/admin-dashboard', roles: ['admin'] },
                 { icon: Briefcase, label: 'Managers', path: '/admin-dashboard?role=manager', roles: ['admin'] },
                 { icon: Coffee, label: 'Employees', path: '/admin-dashboard?role=employee', roles: ['admin'] },
-                { icon: Users, label: 'Customers', path: '/admin-dashboard?role=customer', roles: ['admin'] },
-                { icon: Settings, label: 'System Settings', path: '/admin-dashboard/settings', roles: ['admin'] }
+                { icon: Users, label: 'Customers', path: '/admin-dashboard?role=customer', roles: ['admin'] }
             );
         }
 
         if (userRole === 'customer') {
             items.push(
-                { icon: Package, label: 'Services', path: '/services', roles: ['customer'] },
                 { icon: History, label: 'My Requests', path: '/dashboard', roles: ['customer'] }
             );
         }

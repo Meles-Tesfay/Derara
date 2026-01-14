@@ -1,3 +1,4 @@
+const User = require('../models/User'); // Import User model
 const { createClerkClient } = require('@clerk/clerk-sdk-node');
 
 // Lazy initialization of Clerk client to ensure environment variables are loaded
@@ -25,14 +26,21 @@ const protect = async (req, res, next) => {
             // Get user details from Clerk to get the role from publicMetadata
             const clerkUser = await getClerkClient().users.getUser(decoded.sub);
             
-            // Map Clerk user to the format expected by our controllers
-            req.user = {
-                _id: clerkUser.id,
-                id: clerkUser.id,
-                name: clerkUser.firstName ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim() : clerkUser.username,
-                email: clerkUser.emailAddresses[0]?.emailAddress,
-                role: clerkUser.publicMetadata?.role || 'customer'
-            };
+            // Find user in MongoDB
+            const dbUser = await User.findOne({ clerkId: clerkUser.id });
+
+            if (dbUser) {
+                req.user = dbUser;
+            } else {
+                // Fallback for new users before webhook sync
+                req.user = {
+                    _id: clerkUser.id, // Be careful, this is a string
+                    clerkId: clerkUser.id,
+                    name: clerkUser.firstName ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim() : clerkUser.username,
+                    email: clerkUser.emailAddresses[0]?.emailAddress,
+                    role: clerkUser.publicMetadata?.role || 'customer'
+                };
+            }
 
             return next();
         } catch (error) {

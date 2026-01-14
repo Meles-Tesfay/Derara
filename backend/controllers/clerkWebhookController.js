@@ -1,5 +1,6 @@
 const { Webhook } = require('svix');
 const { createClerkClient } = require('@clerk/clerk-sdk-node');
+const User = require('../models/User');
 
 // Lazy initialization
 let clerk = null;
@@ -54,30 +55,67 @@ exports.handleClerkWebhook = async (req, res) => {
     console.log(`Received webhook event: ${eventType}`);
 
     if (eventType === 'user.created') {
-        const { id, email_addresses, first_name } = evt.data;
+        const { id, email_addresses, first_name, last_name, username } = evt.data;
         const email = email_addresses[0]?.email_address;
+        const name = first_name ? `${first_name} ${last_name || ''}`.trim() : username;
 
         console.log(`New User Created in Clerk: ${id} (${email})`);
 
         try {
             // Check if this is the first user to make them admin
-            const userList = await getClerkClient().users.getUserList();
-            const totalCount = userList.totalCount ?? (Array.isArray(userList) ? userList.length : (userList.data?.length || 0));
-            const isFirstUser = totalCount <= 1;
+            const userCount = await User.countDocuments({});
+            const isFirstUser = userCount === 0;
             
             const role = isFirstUser ? 'admin' : 'customer';
             
             console.log(`Assigning role: ${role} to user: ${id}`);
 
+            // Update Clerk Metadata
             await getClerkClient().users.updateUserMetadata(id, {
                 publicMetadata: {
                     role: role
                 }
             });
 
-            console.log(`Successfully assigned ${role} to ${id}`);
+            // Create User in MongoDB
+            const user = await User.create({
+                clerkId: id,
+                name,
+                email,
+                role
+            });
+
+            console.log(`Successfully synced user to MongoDB: ${user._id}`);
         } catch (error) {
-            console.error('Error updating user metadata:', error.message);
+            console.error('Error syncing user to MongoDB:', error.message);
+        }
+    } else if (eventType === 'user.updated') {
+        const { id, email_addresses, first_name, last_name, username, public_metadata } = evt.data;
+        const email = email_addresses[0]?.email_address;
+        const name = first_name ? `${first_name} ${last_name || ''}`.trim() : username;
+        const role = public_metadata?.role;
+
+        try {
+            const user = await User.findOneAndUpdate(
+                { clerkId: id },
+                { 
+                    name, 
+                    email,
+                    ...(role && { role }) // Update role if present
+                },
+                { new: true }
+            );
+            console.log(`Updated user in MongoDB: ${user?._id}`);
+        } catch (error) {
+             console.error('Error updating user in MongoDB:', error.message);
+        }
+    } else if (eventType === 'user.deleted') {
+        const { id } = evt.data;
+        try {
+            await User.findOneAndDelete({ clerkId: id });
+             console.log(`Deleted user from MongoDB: ${id}`);
+        } catch (error) {
+            console.error('Error deleting user from MongoDB:', error.message);
         }
     }
 

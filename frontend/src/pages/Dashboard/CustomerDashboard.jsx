@@ -10,15 +10,13 @@ import DashboardLayout from '../../components/dashboard/DashboardLayout';
 const CustomerDashboard = () => {
     const { user } = useUser();
     const { getToken } = useAuth();
-    const [activeView, setActiveView] = useState('services');
+    const [activeView, setActiveView] = useState('new');
     const [requests, setRequests] = useState([]);
-    const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
         if (activeView === 'history') fetchMyRequests();
-        if (activeView === 'services') fetchServices();
     }, [activeView]);
 
     const fetchMyRequests = async () => {
@@ -30,16 +28,6 @@ const CustomerDashboard = () => {
             });
             const data = await res.json();
             setRequests(Array.isArray(data) ? data : []);
-        } catch (err) { console.error(err); }
-        finally { setLoading(false); }
-    };
-
-    const fetchServices = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/ops/services`);
-            const data = await res.json();
-            setServices(data.filter(s => s.isVisible));
         } catch (err) { console.error(err); }
         finally { setLoading(false); }
     };
@@ -84,12 +72,6 @@ const CustomerDashboard = () => {
                     {/* Navigation Tabs */}
                     <div className="flex flex-wrap gap-3 mb-12">
                         <button 
-                            onClick={() => setActiveView('services')}
-                            className={`px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${activeView === 'services' ? 'bg-red-600 text-white shadow-xl shadow-red-500/30 scale-105' : 'bg-white dark:bg-gray-800 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                        >
-                            <div className="flex items-center gap-2 italic"><Search size={18}/> Browse Menu</div>
-                        </button>
-                        <button 
                             onClick={() => setActiveView('new')}
                             className={`px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${activeView === 'new' ? 'bg-black dark:bg-white text-white dark:text-black shadow-xl scale-105' : 'bg-white dark:bg-gray-800 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
                         >
@@ -107,24 +89,6 @@ const CustomerDashboard = () => {
 
                     {/* Content */}
                     <div className="grid grid-cols-1 gap-8">
-                        {activeView === 'services' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-1">
-                                {services.map(s => (
-                                    <div key={s._id} className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl transition-all border border-gray-100 dark:border-gray-700 group hover:-translate-y-2">
-                                        <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center text-red-600 mb-6 group-hover:scale-110 transition-transform">
-                                            <Coffee size={32}/>
-                                        </div>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600 mb-2 block">{s.category}</span>
-                                        <h3 className="text-xl font-bold dark:text-white mb-3">{s.name}</h3>
-                                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 leading-relaxed line-clamp-3 font-medium">{s.description}</p>
-                                        <button onClick={() => setActiveView('new')} className="w-full py-4 rounded-2xl bg-gray-900 dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-red-600 dark:hover:bg-red-600 dark:hover:text-white transition-all shadow-lg hover:shadow-red-500/20">
-                                            Request Details <ArrowRight size={16}/>
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
                         {activeView === 'new' && (
                             <div className="max-w-2xl mx-auto w-full bg-white dark:bg-gray-800 p-10 rounded-[3rem] shadow-2xl border border-gray-100 dark:border-gray-700 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-8 opacity-5">
@@ -140,6 +104,10 @@ const CustomerDashboard = () => {
                                             <option value="Sample">Sample Request</option>
                                             <option value="Consulting">Consulting services</option>
                                         </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Phone Number</label>
+                                        <input name="phone" placeholder="+251..." className="w-full p-5 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-transparent focus:border-red-600/50 outline-none transition-all dark:text-white font-bold" required />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Subject</label>

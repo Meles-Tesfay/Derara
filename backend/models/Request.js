@@ -6,6 +6,7 @@ const requestSchema = mongoose.Schema(
     type: { type: String, required: true },
     subject: { type: String, required: true },
     description: { type: String, required: true },
+    phone: { type: String },
     status: {
       type: String,
       enum: ['open', 'in-review', 'responded', 'closed'],

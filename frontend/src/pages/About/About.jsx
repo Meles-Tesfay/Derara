@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, 
@@ -11,17 +11,51 @@ import {
   Award,
   ChevronRight
 } from "lucide-react";
-import DeraraImage from "../../assets/10001.jpg"; 
+import DeraraImage from "../../assets/10001.jpg";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser, useClerk } from "@clerk/clerk-react"; 
 
 const About = () => {
+  const { isSignedIn } = useUser();
+  const { openSignIn } = useClerk();
+  const navigate = useNavigate();
+  const [aboutData, setAboutData] = useState(null);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    fetchAboutData();
   }, []);
+
+  const fetchAboutData = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/ops/about`);
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        setAboutData(data[0]); // Use the first about item as the main profile
+      }
+    } catch (error) {
+      console.error("Failed to fetch about data", error);
+    }
+  };
 
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.6 }
+  };
+
+  // Default Fallback Data (Static)
+  const defaultDesc = "With over a decade of dedication to the Ethiopian coffee landscape, Mr. Beri M founded Derara with a single mission: to provide a direct, ethical bridge between the high-altitude forests of his homeland and the global specialty market.\n\nHis deep-rooted respect for the soil and the people who toil upon it ensures that every bean we export carries the true spirit of Ethiopia.";
+  const defaultQuote = "Coffee isn't just a commodity to us; it's the lifeblood of our culture and the standard of our excellence.";
+  
+  const displayData = aboutData || {
+    name: "Mr. Beri M",
+    role: "Founder & CEO",
+    title: "General Manager", 
+    image: DeraraImage,
+    quote: defaultQuote,
+    description: defaultDesc,
+    tagline: "Authentic Visionary" 
   };
 
   return (
@@ -53,12 +87,21 @@ const About = () => {
             heritage, crafted with precision.
           </p>
 
-          <a
-            href="#contact"
+          <button
+            onClick={() => {
+                if (isSignedIn) {
+                    navigate('/dashboard');
+                } else {
+                    openSignIn({
+                        afterSignInUrl: '/dashboard',
+                        redirectUrl: '/dashboard'
+                    });
+                }
+            }}
             className="inline-block mt-4 bg-[#2D543F]  text-white text-lg font-semibold px-12 py-4 rounded-full shadow-2xl transition duration-300 ease-in-out hover:bg-[#A37D5C] transform hover:scale-105"
           >
             Request a Quote
-          </a>
+          </button>
         </div>
       </section>
       
@@ -82,25 +125,25 @@ const About = () => {
                 {/* Main Image Container */}
                 <motion.div 
                   whileHover={{ rotateY: -5, rotateX: 5, scale: 1.02 }}
-                  className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(59,46,36,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] z-10 border-8 border-white dark:border-white/10"
+                  className="relative aspect-[4/5] max-w-sm mx-auto rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(59,46,36,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] z-10 border-8 border-white dark:border-white/10"
                 >
                   <img 
-                    src={DeraraImage} 
-                    alt="Founder of Derara"
-                    className="w-full h-full object-cover transition-all duration-700"
+                    src={displayData.image} 
+                    alt={displayData.name}
+                    className="w-full h-full object-cover object-top transition-all duration-700"
                   />
                   {/* Smooth Golden Overlay on Hover */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#3B2E24]/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
                   
                   {/* Floating ID Badge Style at bottom of image */}
                   <div className="absolute bottom-8 left-8 right-8 p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-1">Authentic Visionary</p>
+                    <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-1">{displayData.tagline || "Authentic Visionary"}</p>
                     <p className="text-white text-lg font-bold">Rooted in Heritage</p>
                   </div>
                 </motion.div>
 
                 {/* Decorative Frames & Blobs */}
-                <div className="absolute -inset-4 border-2 border-[#A37D5C]/20 rounded-[3rem] -z-10 animate-pulse" />
+                {/* <div className="absolute -inset-4 border-2 border-[#A37D5C]/20 rounded-[3rem] -z-10 animate-pulse" /> */}
                 <div className="absolute -top-12 -left-12 w-48 h-48 bg-amber-400/10 rounded-full blur-3xl -z-20" />
                 <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-[#3B2E24]/5 rounded-full blur-3xl -z-20" />
               </div>
@@ -108,10 +151,10 @@ const About = () => {
               {/* Title & Name directly under the gallery image */}
               <div className="mt-10 pl-6 border-l-4 border-amber-500">
                 <div className="inline-block px-4 py-1.5 bg-[#3B2E24] text-amber-400 text-[10px] font-black uppercase tracking-[0.4em] rounded-sm mb-4">
-                  Founder & CEO
+                  {displayData.role}
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black text-[#3B2E24] dark:text-white leading-none font-serif tracking-tight">
-                  Mr. Beri M
+                  {displayData.name}
                 </h2>
               </div>
             </motion.div>
@@ -129,17 +172,14 @@ const About = () => {
                 <span className="absolute top-4 left-6 text-7xl font-serif text-amber-500/20">"</span>
                 
                 <p className="relative z-10 text-2xl md:text-3xl text-[#3B2E24] dark:text-gray-100 font-medium leading-relaxed italic font-serif">
-                  Coffee isn't just a commodity to us; it's the <span className="text-[#A37D5C] font-bold">lifeblood</span> of our culture and the standard of our excellence.
+                  {displayData.quote}
                 </p>
               </div>
 
               {/* Main Text Content */}
               <div className="space-y-6 text-lg text-gray-600 dark:text-gray-300">
-                <p className="font-semibold leading-relaxed">
-                  With over a decade of dedication to the Ethiopian coffee landscape, Mr. Beri M founded Derara with a single mission: to provide a direct, ethical bridge between the high-altitude forests of his homeland and the global specialty market. 
-                </p>
-                <p className="leading-relaxed opacity-80">
-                  His deep-rooted respect for the soil and the people who toil upon it ensures that every bean we export carries the true spirit of Ethiopia.
+                <p className="font-semibold leading-relaxed whitespace-pre-line">
+                  {displayData.description}
                 </p>
               </div>
 
@@ -147,11 +187,11 @@ const About = () => {
               <div className="flex items-center gap-6 pt-6">
                 <div className="text-center">
                   <span className="block text-4xl md:text-5xl text-[#3B2E24] dark:text-amber-500 font-serif italic opacity-90 tracking-tighter hover:scale-105 transition-transform cursor-default">
-                    Mr. Beri M
+                    {displayData.name.split(' ').pop()} 
                   </span>
                   <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#A37D5C] to-transparent mt-1" />
                   <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.5em] mt-3">
-                    General Manager
+                    {displayData.role}
                   </p>
                 </div>
                 

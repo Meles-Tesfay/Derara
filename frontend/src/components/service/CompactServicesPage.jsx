@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useUser, useClerk } from "@clerk/clerk-react";
 import ethiopianFarmerImg from "../../assets/ethiopian-farmer.jpg";
 import precisionProcessingImg from "../../assets/processing-machine.jpg";
 import wholesalePartnershipImg from "../../assets/wholesale-partnership.jpg";
@@ -93,7 +94,43 @@ const TornPaperDivider = ({ flip = false }) => (
 
 const BrewlabServicesPage = () => {
     const navigate = useNavigate();
+    const { isSignedIn } = useUser();
+    const { openSignIn } = useClerk();
+    const [services, setServices] = useState([]);
 
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/ops/services`);
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    // Normalize data to match UI needs
+                    const formattedData = data.map((item, index) => ({
+                        id: (index + 1), // Generate 1-based ID for mapping to UI slots
+                        _id: item._id, // Keep real ID for links if needed
+                        slug: item.title.toLowerCase().replace(/ /g, '-'),
+                        title: item.title,
+                        tagline: item.features ? item.features.split(',')[0] : "Premium Service", // Use first feature as tagline fallback
+                        description: item.description,
+                        image: item.image || (index === 0 ? ethiopianFarmerImg : (index === 1 ? precisionProcessingImg : (index === 2 ? logisticsNewImg : wholesaleNewImg))),
+                         // Fallback bento images
+                        bentoImage: item.bentoImage || item.image || (index === 1 ? processingDryingImg : (index === 2 ? logisticsTruckImg : partnershipHandshakeImg)),
+                        features: item.features ? item.features.split(',').map(f => f.trim()) : ["Premium Quality", "Certified"]
+                    }));
+                    setServices(formattedData);
+                }
+            } catch (error) {
+                console.error("Failed to fetch services", error);
+                // Fallback to static if fail
+                setServices(servicesData);
+            }
+        };
+        fetchServices();
+    }, []);
+
+    // Check if we have dynamic data, else use static fallback (mostly during initial load)
+    const displayServices = services.length > 0 ? services : servicesData;
+ 
     return (
         <div className="bg-[#2D1B13] text-white overflow-hidden">
             {/* Hero Section - Redesigned */}
@@ -220,7 +257,19 @@ const BrewlabServicesPage = () => {
                         transition={{ duration: 0.6, delay: 0.6 }}
                         className="flex flex-col md:flex-row items-center justify-center gap-4"
                     >
-                        <button className="px-6 py-2.5 bg-[#2D1B13] text-[#FFC436] text-sm md:text-base font-black rounded-full hover:scale-105 transition-transform duration-300 shadow-xl border-2 border-[#2D1B13]">
+                        <button 
+                            onClick={() => {
+                                if (isSignedIn) {
+                                    navigate('/dashboard');
+                                } else {
+                                    openSignIn({
+                                        afterSignInUrl: '/dashboard',
+                                        redirectUrl: '/dashboard'
+                                    });
+                                }
+                            }}
+                            className="px-6 py-2.5 bg-[#2D1B13] text-[#FFC436] text-sm md:text-base font-black rounded-full hover:scale-105 transition-transform duration-300 shadow-xl border-2 border-[#2D1B13]"
+                        >
                             GET A QUOTE
                         </button>
                         <button className="px-6 py-2.5 bg-transparent text-[#2D1B13] text-sm md:text-base font-black rounded-full hover:bg-[#2D1B13] hover:text-[#FFC436] transition-all duration-300 border-2 border-[#2D1B13]">
@@ -228,9 +277,8 @@ const BrewlabServicesPage = () => {
                         </button>
                     </motion.div>
 
-                    {/* Mini Service Cards - Integrated in Hero */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-16 text-left relative z-20">
-                        {servicesData.map((service, index) => (
+                        {displayServices.map((service, index) => (
                             <motion.div
                                 key={service.id}
                                 initial={{ opacity: 0, y: 30 }}
@@ -345,7 +393,7 @@ const BrewlabServicesPage = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[600px] relative z-10">
-                        {servicesData.map((service, index) => (
+                        {displayServices.map((service, index) => (
                             <motion.div
                                 key={service.id}
                                 initial={{ opacity: 0, scale: 0.95 }}
@@ -478,7 +526,19 @@ const BrewlabServicesPage = () => {
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className="flex items-center justify-center gap-4"
                     >
-                        <button className="px-10 py-5 bg-[#FFB500] text-[#2D1B13] font-black rounded-full hover:bg-white transition-all duration-300 shadow-2xl text-xl">
+                        <button 
+                             onClick={() => {
+                                if (isSignedIn) {
+                                    navigate('/dashboard');
+                                } else {
+                                    openSignIn({
+                                        afterSignInUrl: '/dashboard',
+                                        redirectUrl: '/dashboard'
+                                    });
+                                }
+                            }}
+                            className="px-10 py-5 bg-[#FFB500] text-[#2D1B13] font-black rounded-full hover:bg-white transition-all duration-300 shadow-2xl text-xl"
+                        >
                             GET IN TOUCH
                         </button>
                         <button className="w-16 h-16 bg-white text-[#2D1B13] rounded-full flex items-center justify-center hover:bg-[#FFB500] transition-all duration-300 shadow-2xl">

@@ -1,14 +1,50 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaLinkedinIn,
   FaInstagram,
   FaTwitter,
   FaFacebookF,
+  FaYoutube,
+  FaTiktok,
+  FaTelegram,
+  FaWhatsapp
 } from "react-icons/fa";
 import logo from "../../assets/image.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser, useClerk } from "@clerk/clerk-react";
 
 const Footer = () => {
+    const { isSignedIn } = useUser();
+    const { openSignIn } = useClerk();
+    const navigate = useNavigate();
+    const [contact, setContact] = useState(null);
+
+    useEffect(() => {
+        const fetchContact = async () => {
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/ops/contact-info`);
+                const data = await res.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    setContact(data[0]);
+                }
+            } catch (error) {
+                console.error("Failed to fetch footer info", error);
+            }
+        };
+        fetchContact();
+    }, []);
+
+    const socialIcons = {
+        'Facebook': <FaFacebookF />,
+        'Instagram': <FaInstagram />,
+        'LinkedIn': <FaLinkedinIn />,
+        'Twitter': <FaTwitter />,
+        'YouTube': <FaYoutube />,
+        'TikTok': <FaTiktok />,
+        'Telegram': <FaTelegram />,
+        'WhatsApp': <FaWhatsapp />
+    };
+
   return (
     <footer className="relative bg-gray-900 dark:bg-gray-900 text-gray-300 dark:text-gray-300 py-20 px-6 overflow-hidden border-t border-gray-200 dark:border-white/5">
       {/* Texture Overlay */}
@@ -72,27 +108,37 @@ const Footer = () => {
           <ul className="space-y-4 text-sm lg:text-base">
             <li>
               <a
-                href="tel:+251984008775"
+                href={contact ? `tel:${contact.phone?.replace(/\s/g, '')}` : "tel:+251984008775"}
                 className="text-gray-700 dark:text-gray-400 hover:text-red-500 transition-colors block"
               >
-                +251 984 00 87 75
+                {contact ? contact.phone : "+251 984 00 87 75"}
               </a>
             </li>
             <li>
               <a
-                href="mailto:derarabusiness53@gmail.com"
+                 href={contact ? `mailto:${contact.email}` : "mailto:derarabusiness53@gmail.com"}
                 className="text-gray-700 dark:text-gray-400 hover:text-red-500 transition-colors block"
               >
-                derarabusiness53@gmail.com
+                {contact ? contact.email : "derarabusiness53@gmail.com"}
               </a>
             </li>
             <li>
-              <span className="block mt-2 text-gray-700 dark:text-gray-400">
-                Akaki-Kality Sub-City, Woreda 13, Tullu Dimtu
-                <br />
-                Hamer Building, 3rd Floor, Office T0011
-                <br />
-                Addis Ababa, Ethiopia
+              <span className="block mt-2 text-gray-700 dark:text-gray-400 whitespace-pre-line">
+                {contact ? (
+                    <>
+                        {contact.address}
+                        {contact.city && <><br />{contact.city}</>}
+                        {contact.country && <>, {contact.country}</>}
+                    </>
+                ) : (
+                    <>
+                        Akaki-Kality Sub-City, Woreda 13, Tullu Dimtu
+                        <br />
+                        Hamer Building, 3rd Floor, Office T0011
+                        <br />
+                        Addis Ababa, Ethiopia
+                    </>
+                )}
               </span>
             </li>
           </ul>
@@ -109,7 +155,17 @@ const Footer = () => {
           </p>
           <form
             className="flex flex-col gap-3"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={(e) => {
+                e.preventDefault();
+                if (isSignedIn) {
+                    navigate('/dashboard');
+                } else {
+                    openSignIn({
+                        afterSignInUrl: '/dashboard',
+                        redirectUrl: '/dashboard'
+                    });
+                }
+            }}
           >
             <input
               type="email"
@@ -135,34 +191,27 @@ const Footer = () => {
         </div>
 
         <div className="flex gap-6">
-          <a
-            href="#"
-            aria-label="LinkedIn"
-            className="text-xl text-gray-700 dark:text-gray-400 hover:text-red-500 hover:-translate-y-1 transition-all duration-300"
-          >
-            <FaLinkedinIn />
-          </a>
-          <a
-            href="#"
-            aria-label="Instagram"
-            className="text-xl text-gray-700 dark:text-gray-400 hover:text-red-500 hover:-translate-y-1 transition-all duration-300"
-          >
-            <FaInstagram />
-          </a>
-          <a
-            href="#"
-            aria-label="Twitter"
-            className="text-xl text-gray-700 dark:text-gray-400 hover:text-red-500 hover:-translate-y-1 transition-all duration-300"
-          >
-            <FaTwitter />
-          </a>
-          <a
-            href="#"
-            aria-label="Facebook"
-            className="text-xl text-gray-700 dark:text-gray-400 hover:text-red-500 hover:-translate-y-1 transition-all duration-300"
-          >
-            <FaFacebookF />
-          </a>
+            {contact?.socials?.length > 0 ? (
+                contact.socials.map((social, idx) => (
+                    <a
+                        key={idx}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={social.platform}
+                        className="text-xl text-gray-700 dark:text-gray-400 hover:text-red-500 hover:-translate-y-1 transition-all duration-300"
+                    >
+                        {socialIcons[social.platform] || <FaFacebookF />}
+                    </a>
+                ))
+            ) : (
+                <>
+                  <a href="#" className="text-xl text-gray-700 dark:text-gray-400 hover:text-red-500 hover:-translate-y-1 transition-all duration-300"><FaLinkedinIn /></a>
+                  <a href="#" className="text-xl text-gray-700 dark:text-gray-400 hover:text-red-500 hover:-translate-y-1 transition-all duration-300"><FaInstagram /></a>
+                  <a href="#" className="text-xl text-gray-700 dark:text-gray-400 hover:text-red-500 hover:-translate-y-1 transition-all duration-300"><FaTwitter /></a>
+                  <a href="#" className="text-xl text-gray-700 dark:text-gray-400 hover:text-red-500 hover:-translate-y-1 transition-all duration-300"><FaFacebookF /></a>
+                </>
+            )}
         </div>
 
         <div className="flex gap-8">

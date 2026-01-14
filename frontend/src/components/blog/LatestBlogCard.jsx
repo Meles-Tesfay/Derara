@@ -2,7 +2,11 @@ import React from "react";
 import { blogPosts } from "../../assets/assets";
 import { motion } from "framer-motion";
 
-export default function LatestBlog() {
+export default function LatestBlog({ blogs }) {
+    // Check if blogs prop is provided (non-null). 
+    // If it is an array (even empty), we use it. If null/undefined, fallback to static.
+    const finalPosts = blogs || blogPosts.slice(0, 3);
+
     return (
         <div className="bg-white dark:bg-[#0a0a0a] py-24 sm:py-32 relative overflow-hidden transition-colors duration-300">
             {/* Background Decorative Blob - Yellow to Light Gray/Black */}
@@ -68,9 +72,22 @@ export default function LatestBlog() {
                 <div className="mx-auto mt-16 grid max-w-2xl auto-rows-fr grid-cols-1 gap-8 
                         sm:mt-20 lg:max-w-none lg:grid-cols-3">
 
-                    {blogPosts.slice(0, 3).map((post, index) => (
+                    {finalPosts.map((post, index) => {
+                        // Normalize Data (Handle Backend vs Static)
+                        const isDynamic = !!post._id; 
+                        const title = post.title;
+                        const description = post.description;
+                        const imgSrc = isDynamic ? post.image : post.imgSrc;
+                        const date = isDynamic ? new Date(post.createdAt || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : post.date;
+                        const categoryTitle = isDynamic ? (post.category || 'General') : post.category?.title;
+                        const categoryHref = isDynamic ? '#' : post.category?.href;
+                        const authorName = isDynamic ? (post.author || 'Mentesnot D.') : post.author?.name;
+                        const authorRole = isDynamic ? '' : post.author?.role;
+                        const authorImg = isDynamic ? null : post.author?.imageUrl; // Backend doesn't have author image yet, or maybe user not entering it? Dashboard has 'image' for Post, but not Author avatar. Author is text input.
+
+                        return (
                         <motion.article
-                            key={post.id}
+                            key={post.id || post._id}
                             initial={{ opacity: 0, y: 50 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -79,8 +96,8 @@ export default function LatestBlog() {
                          overflow-hidden bg-gray-900 px-8 pb-8 pt-80 sm:pt-48 lg:pt-80 group border-2 border-transparent hover:border-[#FFC436] transition-all duration-300 hover:shadow-2xl hover:shadow-[#FFC436]/20"
                         >
                             <img
-                                src={post.imgSrc}
-                                alt={post.imgAlt}
+                                src={imgSrc}
+                                alt={title}
                                 className="absolute inset-0 -z-10 h-full w-full object-cover 
                            transition-transform duration-500 group-hover:scale-105"
                             />
@@ -89,52 +106,56 @@ export default function LatestBlog() {
                               from-[#2D1B13] via-[#2D1B13]/80 to-transparent opacity-90 transition-all duration-500" />
 
                             <div className="flex flex-wrap items-center text-sm text-white/90 font-medium">
-                                <time dateTime={post.date} className="mr-8 border-b-2 border-white pb-0.5">
-                                    {post.date}
+                                <time dateTime={date} className="mr-8 border-b-2 border-white pb-0.5">
+                                    {date}
                                 </time>
 
-                                {post.category && (
+                                {categoryTitle && (
                                     <a
-                                        href={post.category.href}
+                                        href={categoryHref}
                                         className="rounded-full bg-[#FFC436] px-3 py-1.5 text-black 
                                font-bold hover:bg-white hover:text-black transition-colors"
                                     >
-                                        {post.category.title}
+                                        {categoryTitle}
                                     </a>
                                 )}
                             </div>
 
                             <h3 className="mt-4 text-lg font-bold text-white group-hover:text-[#FFC436] transition-colors">
-                                <a href={post.href}>
+                                <a href="#">
                                     <span className="absolute inset-0" />
-                                    {post.title}
+                                    {title}
                                 </a>
                             </h3>
 
-                            <p className="mt-2 text-base font-medium text-white shadow-black drop-shadow-md border-l-4 border-white pl-3">
-                                {post.description}
+                            <p className="mt-2 text-base font-medium text-white shadow-black drop-shadow-md border-l-4 border-white pl-3 line-clamp-3">
+                                {description}
                             </p>
 
-                            {post.author && (
-                                <div className="flex items-center gap-x-4 border-t border-gray-300 dark:border-gray-100/10 pt-4 mt-6">
+                            <div className="flex items-center gap-x-4 border-t border-gray-300 dark:border-gray-100/10 pt-4 mt-6">
+                                {authorImg ? (
                                     <img
-                                        src={post.author.imageUrl}
+                                        src={authorImg}
                                         alt=""
                                         className="h-10 w-10 rounded-full bg-gray-200 dark:bg-white/10"
                                     />
-                                    <div className="text-sm leading-6">
-                                        <p className="font-semibold text-gray-900 dark:text-white">
-                                            <a href={post.author.href}>
-                                                <span className="absolute inset-0" />
-                                                {post.author.name}
-                                            </a>
-                                        </p>
-                                        <p className="text-gray-700 dark:text-gray-300 font-medium dark:font-normal">{post.author.role}</p>
+                                ) : (
+                                    <div className="h-10 w-10 rounded-full bg-[#FFC436] flex items-center justify-center text-black font-bold">
+                                        {authorName?.charAt(0)}
                                     </div>
+                                )}
+                                <div className="text-sm leading-6">
+                                    <p className="font-semibold text-gray-900 dark:text-white">
+                                        <a href="#">
+                                            <span className="absolute inset-0" />
+                                            {authorName}
+                                        </a>
+                                    </p>
+                                    {authorRole && <p className="text-gray-700 dark:text-gray-300 font-medium dark:font-normal">{authorRole}</p>}
                                 </div>
-                            )}
+                            </div>
                         </motion.article>
-                    ))}
+                    )})}
                 </div>
             </div>
         </div>

@@ -14,6 +14,7 @@ import RouteLoadingWrapper from "./components/common/RouteLoadingWrapper";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/Auth/LoginPage";
+import SignUpPage from "./pages/Auth/SignUpPage";
 import CustomerDashboard from "./pages/Dashboard/CustomerDashboard";
 import EmployeeDashboard from "./pages/Dashboard/EmployeeDashboard";
 import ManagerDashboard from "./pages/Dashboard/ManagerDashboard";
@@ -44,7 +45,8 @@ const App = () => {
                   <Route path="/products" element={<Products />} />
 
                   {/* Authentication Routes */}
-                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/login/*" element={<LoginPage />} />
+                  <Route path="/sign-up/*" element={<SignUpPage />} />
 
                   {/* Protected Routes */}
                   <Route element={<ProtectedRoute allowedRoles={['customer']} />}>

@@ -15,7 +15,7 @@ const ContactInfo = require('../models/ContactInfo');
 // Helper for generic CRUD
 const createItem = (Model) => async (req, res) => {
   try {
-    const item = await Model.create({ ...req.body, createdBy: req.user.id });
+    const item = await Model.create({ ...req.body, createdBy: req.user.clerkId });
     res.status(201).json(item);
   } catch (error) { res.status(500).json({ message: error.message }); }
 };
@@ -129,7 +129,7 @@ exports.assignTask = async (req, res) => {
       description,
       assignedTo,
       dueDate,
-      assignedBy: req.user.id
+      assignedBy: req.user.clerkId
     });
     res.status(201).json(task);
   } catch (error) { res.status(500).json({ message: error.message }); }

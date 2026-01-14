@@ -18,9 +18,13 @@ import limuWashed from "../../assets/limuWashed.png";
 import gujiImage from "../../assets/guji.jpg";
 import gujiNatural from "../../assets/gujiNatural.png";
 import harrarImage from "../../assets/harrar.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser, useClerk } from "@clerk/clerk-react";
 
 const Products = () => {
+  const { isSignedIn } = useUser();
+  const { openSignIn } = useClerk();
+  const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formStatus, setFormStatus] = useState("idle"); // idle, submitting, success
@@ -159,12 +163,21 @@ const Products = () => {
             Contact our sourcing team for current harvest availability, sample
             requests, and shipping logistics.
           </p>
-          <Link
-            to="/contact"
+          <button
+            onClick={() => {
+                if (isSignedIn) {
+                    navigate('/dashboard');
+                } else {
+                    openSignIn({
+                        afterSignInUrl: '/dashboard',
+                        redirectUrl: '/dashboard'
+                    });
+                }
+            }}
             className="inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-white transition-all duration-300 bg-red-600 rounded-full hover:bg-red-700 hover:scale-105 shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:shadow-[0_0_40px_rgba(220,38,38,0.6)]"
           >
             Request Latest Offer Sheet
-          </Link>
+          </button>
         </div>
       </section>
 
@@ -274,11 +287,20 @@ const Products = () => {
                   <div className="flex gap-4 pt-2 mt-auto">
                     <button
                       type="button"
-                      onClick={() => setShowForm(true)}
+                      onClick={() => {
+                        if (isSignedIn) {
+                          navigate('/dashboard');
+                        } else {
+                          openSignIn({
+                            afterSignInUrl: '/dashboard',
+                            redirectUrl: '/dashboard'
+                          });
+                        }
+                      }}
                       className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#C66B44] text-white font-bold rounded-xl hover:bg-[#A55233] hover:shadow-[0_10px_30px_rgba(198,107,68,0.4)] hover:-translate-y-1 transition-all duration-300 shadow-xl"
                     >
                       <Mail className="w-5 h-5" />
-                      Contact with Email
+                      Submit Request
                     </button>
                     <button
                       type="button"

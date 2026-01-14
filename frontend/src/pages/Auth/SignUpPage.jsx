@@ -1,17 +1,13 @@
-import React, { useEffect } from 'react';
-import { SignIn } from '@clerk/clerk-react';
+import React from 'react';
+import { SignUp } from '@clerk/clerk-react';
 
-const LoginPage = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
+const SignUpPage = () => {
   return (
     <div className="min-h-screen pt-24 pb-12 px-6 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-       <SignIn 
-         path="/login" 
+       <SignUp 
+         path="/sign-up" 
          routing="path" 
-         signUpUrl="/sign-up"
+         signInUrl="/login"
          appearance={{
             elements: {
                 rootBox: "mx-auto",
@@ -31,4 +27,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignUpPage;

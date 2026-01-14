@@ -69,7 +69,7 @@ const Header = () => {
                 Log In
               </Link>
               <Link
-                to="/login"
+                to="/sign-up"
                 className="px-5 py-2 text-sm font-bold uppercase tracking-wider text-white bg-red-600 border-2 border-red-600 rounded-lg transition-all duration-300 shadow-[0_0_10px_rgba(220,38,38,0.3)] hover:shadow-[0_0_20px_rgba(220,38,38,0.6)] hover:bg-red-700 hover:border-red-700 hover:-translate-y-0.5 transform font-outfit"
               >
                 Sign Up

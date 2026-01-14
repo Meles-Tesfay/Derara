@@ -12,9 +12,14 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    clerkId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows null/undefined to not conflict if we have legacy users
+    },
     password: {
       type: String,
-      required: true,
+      required: false, // Not required for Clerk users
     },
     role: {
       type: String,

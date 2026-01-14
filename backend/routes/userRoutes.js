@@ -7,9 +7,9 @@ const {
 } = require('../controllers/userController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-// All routes here are protected and require Admin role
+// All routes here are protected and require Admin or Manager role
 router.use(protect);
-router.use(authorize('admin'));
+router.use(authorize('admin', 'manager'));
 
 router.get('/', getUsers);
 router.put('/:id/role', updateUserRole);
